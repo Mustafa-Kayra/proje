@@ -16,6 +16,8 @@ function App() {
   const [stats, setStats] = useState(null);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('colorful');
   const { toast } = useToast();
 
   const startGame = (mode) => {
