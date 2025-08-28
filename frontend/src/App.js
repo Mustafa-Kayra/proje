@@ -52,6 +52,31 @@ function App() {
       newStats.health = Math.max(0, Math.min(100, newStats.health + choice.health));
     }
 
+    // Update owner love if exists (easy mode)
+    if (choice.ownerLove && newStats.ownerLove !== undefined) {
+      newStats.ownerLove = Math.max(0, Math.min(100, newStats.ownerLove + choice.ownerLove));
+    }
+
+    // Update adoption chance if exists
+    if (choice.adoptionChance && newStats.adoptionChance !== undefined) {
+      newStats.adoptionChance = Math.max(0, Math.min(100, newStats.adoptionChance + choice.adoptionChance));
+    }
+
+    // Update kitten stats if exists
+    if (choice.kittenHunger && newStats.kittens) {
+      newStats.kittens = newStats.kittens.map(kitten => ({
+        ...kitten,
+        hunger: Math.max(0, Math.min(100, kitten.hunger + choice.kittenHunger))
+      }));
+    }
+
+    if (choice.kittenHealth && newStats.kittens) {
+      newStats.kittens = newStats.kittens.map(kitten => ({
+        ...kitten,
+        health: Math.max(0, Math.min(100, kitten.health + choice.kittenHealth))
+      }));
+    }
+
     // Check game over conditions
     if (newStats.hunger !== undefined && newStats.hunger <= 0) {
       setGameOver(true);
@@ -82,6 +107,24 @@ function App() {
           variant: "destructive"
         });
       }
+    }
+
+    // Check adoption success
+    if (newStats.adoptionChance >= 100) {
+      setGameOver(true);
+      toast({
+        title: "Tebrikler! 🎉",
+        description: "Başarıyla sahiplenildin! Mutlu bir yuvan var artık! 🏠💕",
+      });
+    }
+
+    // Check owner love success (easy mode)
+    if (newStats.ownerLove >= 100) {
+      setGameOver(true);
+      toast({
+        title: "Mükemmel! 💕",
+        description: "Sahibin seni çok çok seviyor! En sevimli kedisin! 🐱👑",
+      });
     }
 
     setStats(newStats);
