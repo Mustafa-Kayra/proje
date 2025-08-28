@@ -44,9 +44,12 @@ function App() {
     // Update points
     newStats.points += choice.points;
     
-    // Update hunger if exists
+    // Update hunger if exists - STRICT HUNGER SYSTEM
     if (choice.hunger && newStats.hunger !== undefined) {
       newStats.hunger = Math.max(0, Math.min(100, newStats.hunger + choice.hunger));
+      
+      // Automatic hunger decrease over time (more realistic)
+      newStats.hunger = Math.max(0, newStats.hunger - 3);
     }
     
     // Update health if exists
@@ -79,54 +82,58 @@ function App() {
       }));
     }
 
-    // Check game over conditions
+    // STRICT DEATH CONDITIONS - HUNGER = 0 MEANS DEATH
     if (newStats.hunger !== undefined && newStats.hunger <= 0) {
       setGameOver(true);
       toast({
-        title: "Oyun Bitti!",
-        description: "Açlıktan öldün... 😿",
+        title: "💀 Açlıktan Öldün!",
+        description: `Karnın çok gurulduyordu... ${Math.floor(playTime/60000)} dakika yaşadın. 😿`,
         variant: "destructive"
       });
+      return;
     }
 
     if (newStats.health !== undefined && newStats.health <= 0) {
       setGameOver(true);
       toast({
-        title: "Oyun Bitti!",
-        description: "Sağlığın bitti... 😿",
+        title: "💀 Sağlığın Bitti!",
+        description: `Çok zorlu sokak hayatıydı... ${Math.floor(playTime/60000)} dakika yaşadın. 😿`,
         variant: "destructive"
       });
+      return;
     }
 
-    // Check kitten health in hard mode
+    // Check kitten health in hard mode - STRICT
     if (newStats.kittens) {
       const deadKitten = newStats.kittens.find(kitten => kitten.health <= 0 || kitten.hunger <= 0);
       if (deadKitten) {
         setGameOver(true);
         toast({
-          title: "Oyun Bitti!",
-          description: `${deadKitten.name} öldü... Anne kedi olarak başarısız oldun. 😿`,
+          title: "💔 Yavru Kaybı!",
+          description: `${deadKitten.name} öldü... Anne kedi olarak başarısız oldun. ${Math.floor(playTime/60000)} dakika oynadın. 😿`,
           variant: "destructive"
         });
+        return;
       }
     }
 
-    // Check adoption success
+    // SUCCESSFUL ENDINGS
     if (newStats.adoptionChance >= 100) {
       setGameOver(true);
       toast({
-        title: "Tebrikler! 🎉",
-        description: "Başarıyla sahiplenildin! Mutlu bir yuvan var artık! 🏠💕",
+        title: "🎉 SAHIPLENDIM!",
+        description: `${Math.floor(playTime/60000)} dakika sonra sevgi dolu bir yuva buldum! 🏠💕`,
       });
+      return;
     }
 
-    // Check owner love success (easy mode)
     if (newStats.ownerLove >= 100) {
       setGameOver(true);
       toast({
-        title: "Mükemmel! 💕",
-        description: "Sahibin seni çok çok seviyor! En sevimli kedisin! 🐱👑",
+        title: "👑 MÜKEMMEL KEDİ!",
+        description: `${Math.floor(playTime/60000)} dakika boyunca mükemmel ev kedisi oldun! 🐱💕`,
       });
+      return;
     }
 
     setStats(newStats);
