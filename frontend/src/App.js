@@ -154,6 +154,27 @@ function App() {
     setStats(null);
     setCurrentScenarioIndex(0);
     setGameOver(false);
+    setShowProfile(false);
+  };
+
+  const getThemeGameOverBg = () => {
+    const themeData = themes[currentTheme] || themes.colorful;
+    if (currentTheme === 'dark') {
+      return 'bg-gradient-to-br from-gray-800 to-black';
+    } else if (currentTheme === 'light') {
+      return 'bg-gradient-to-br from-white to-gray-100';
+    }
+    return 'bg-gradient-to-br from-purple-100 to-pink-100';
+  };
+
+  const getGameOverCardBg = () => {
+    return currentTheme === 'dark' 
+      ? 'bg-gray-800 border-gray-700' 
+      : 'bg-white';
+  };
+
+  const getGameOverTextColor = () => {
+    return currentTheme === 'dark' ? 'text-white' : 'text-gray-800';
   };
 
   if (!currentGame) {
