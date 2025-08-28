@@ -238,6 +238,8 @@ function App() {
                   gameMode={gameMode}
                   stats={stats}
                   onUpdateStats={setStats}
+                  onOpenProfile={() => setShowProfile(true)}
+                  currentTheme={currentTheme}
                 />
               </div>
               <GameScenario 
@@ -246,6 +248,16 @@ function App() {
                 stats={stats}
                 onMakeChoice={makeChoice}
                 onNextScenario={nextScenario}
+                currentTheme={currentTheme}
+              />
+              <ProfilePanel 
+                isOpen={showProfile}
+                onClose={() => setShowProfile(false)}
+              />
+              <ThemeSelector 
+                currentTheme={currentTheme} 
+                onThemeChange={setCurrentTheme}
+                position="bottom-right" 
               />
             </div>
           } />
