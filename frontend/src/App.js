@@ -184,6 +184,8 @@ function App() {
     setCurrentScenarioIndex(0);
     setGameOver(false);
     setShowProfile(false);
+    setGameTime(Date.now());
+    setPlayTime(0);
   };
 
   const getThemeGameOverBg = () => {
