@@ -273,13 +273,14 @@ function App() {
                   currentTheme={currentTheme}
                 />
               </div>
-              <GameScenario 
+              <DetailedGameScenario 
                 scenario={currentScenario}
                 gameMode={gameMode}
                 stats={stats}
                 onMakeChoice={makeChoice}
                 onNextScenario={nextScenario}
                 currentTheme={currentTheme}
+                gameTime={gameTime}
               />
               <ProfilePanel 
                 isOpen={showProfile}
