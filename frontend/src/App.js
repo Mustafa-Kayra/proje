@@ -182,7 +182,16 @@ function App() {
       <BrowserRouter>
         <div className="App">
           <Routes>
-            <Route path="/" element={<GameMenu onStartGame={startGame} />} />
+            <Route path="/" element={
+              <div>
+                <GameMenu onStartGame={startGame} currentTheme={currentTheme} />
+                <ThemeSelector 
+                  currentTheme={currentTheme} 
+                  onThemeChange={setCurrentTheme}
+                  position="bottom-right" 
+                />
+              </div>
+            } />
           </Routes>
           <Toaster />
         </div>
