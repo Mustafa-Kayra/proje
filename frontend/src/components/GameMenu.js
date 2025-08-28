@@ -5,8 +5,13 @@ import { Badge } from './ui/badge';
 import { Cat, Home, MapPin, Baby } from 'lucide-react';
 import { gameScenarios, themes } from '../data/mock';
 
-const GameMenu = ({ onStartGame }) => {
+const GameMenu = ({ onStartGame, currentTheme }) => {
   const [selectedMode, setSelectedMode] = useState(null);
+
+  const getThemeMenuBg = () => {
+    const themeData = themes[currentTheme] || themes.colorful;
+    return themeData.menuBg;
+  };
 
   const getModeIcon = (mode) => {
     switch(mode) {
