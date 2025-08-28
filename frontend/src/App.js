@@ -202,11 +202,11 @@ function App() {
   if (gameOver) {
     return (
       <BrowserRouter>
-        <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl p-8 text-center max-w-md">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">Oyun Bitti!</h2>
-            <p className="text-gray-600 mb-2">Toplam Puan: <span className="font-bold text-purple-600">{stats.points}</span></p>
-            <p className="text-gray-600 mb-6">Mod: {gameMode.name}</p>
+        <div className={`min-h-screen ${getThemeGameOverBg()} flex items-center justify-center p-4`}>
+          <div className={`${getGameOverCardBg()} rounded-xl shadow-2xl p-8 text-center max-w-md`}>
+            <h2 className={`text-3xl font-bold mb-4 ${getGameOverTextColor()}`}>Oyun Bitti!</h2>
+            <p className={`mb-2 ${getGameOverTextColor()}`}>Toplam Puan: <span className="font-bold text-purple-600">{stats.points}</span></p>
+            <p className={`mb-6 ${getGameOverTextColor()}`}>Mod: {gameMode.name}</p>
             <button
               onClick={resetGame}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transform transition-all duration-200 hover:scale-105"
@@ -214,6 +214,11 @@ function App() {
               Yeniden Oyna
             </button>
           </div>
+          <ThemeSelector 
+            currentTheme={currentTheme} 
+            onThemeChange={setCurrentTheme}
+            position="bottom-right" 
+          />
           <Toaster />
         </div>
       </BrowserRouter>
