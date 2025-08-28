@@ -234,16 +234,49 @@ function App() {
     return (
       <BrowserRouter>
         <div className={`min-h-screen ${getThemeGameOverBg()} flex items-center justify-center p-4`}>
-          <div className={`${getGameOverCardBg()} rounded-xl shadow-2xl p-8 text-center max-w-md`}>
-            <h2 className={`text-3xl font-bold mb-4 ${getGameOverTextColor()}`}>Oyun Bitti!</h2>
-            <p className={`mb-2 ${getGameOverTextColor()}`}>Toplam Puan: <span className="font-bold text-purple-600">{stats.points}</span></p>
-            <p className={`mb-6 ${getGameOverTextColor()}`}>Mod: {gameMode.name}</p>
-            <button
-              onClick={resetGame}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transform transition-all duration-200 hover:scale-105"
-            >
-              Yeniden Oyna
-            </button>
+          <div className={`${getGameOverCardBg()} rounded-xl shadow-2xl p-8 text-center max-w-lg border border-purple-200`}>
+            <div className="text-6xl mb-4">
+              {stats.adoptionChance >= 100 && '🏠'}
+              {stats.ownerLove >= 100 && '👑'}
+              {(stats.hunger <= 0 || stats.health <= 0 || (stats.kittens && stats.kittens.find(k => k.health <= 0 || k.hunger <= 0))) && '💀'}
+            </div>
+            <h2 className={`text-3xl font-bold mb-4 ${getGameOverTextColor()}`}>
+              {stats.adoptionChance >= 100 && 'SAHIPLENDIM!'}
+              {stats.ownerLove >= 100 && 'MÜKEMMEL KEDİ!'}
+              {(stats.hunger <= 0 || stats.health <= 0 || (stats.kittens && stats.kittens.find(k => k.health <= 0 || k.hunger <= 0))) && 'OYUN BİTTİ'}
+            </h2>
+            
+            <div className="space-y-2 mb-6">
+              <p className={`${getGameOverTextColor()}`}>
+                <span className="font-bold text-purple-600 text-xl">{stats.points}</span> puan topladın
+              </p>
+              <p className={`${getGameOverTextColor()}`}>
+                <span className="font-bold text-blue-600">{Math.floor(playTime/60000)} dakika</span> yaşadın
+              </p>
+              <p className={`${getGameOverTextColor()}`}>
+                Mod: <span className="font-bold">{gameMode.name}</span>
+              </p>
+              {gameMode.infiniteMode && (
+                <p className={`text-sm ${getGameOverTextColor()} opacity-75`}>
+                  (Sonsuz modda oynuyordun)
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              <button
+                onClick={resetGame}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transform transition-all duration-200 hover:scale-105"
+              >
+                🎮 Yeniden Oyna
+              </button>
+              <button
+                onClick={() => setShowProfile(true)}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transform transition-all duration-200 hover:scale-105"
+              >
+                📊 İstatistikleri Gör
+              </button>
+            </div>
           </div>
           <ThemeSelector 
             currentTheme={currentTheme} 
