@@ -18,6 +18,8 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('colorful');
+  const [gameTime, setGameTime] = useState(Date.now());
+  const [playTime, setPlayTime] = useState(0);
   const { toast } = useToast();
 
   const startGame = (mode) => {
