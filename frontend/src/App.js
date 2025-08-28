@@ -142,15 +142,35 @@ function App() {
   const nextScenario = () => {
     if (gameOver) return;
 
+    // Update play time
+    setPlayTime(prev => prev + 60000); // Add 1 minute per scenario
+    
+    // Easy mode - INFINITE LOOP
+    if (gameMode.infiniteMode) {
+      const nextIndex = (currentScenarioIndex + 1) % currentGame.scenarios.length;
+      setCurrentScenarioIndex(nextIndex);
+      
+      if (nextIndex === 0) {
+        toast({
+          title: "🔄 Döngü Devam Ediyor!",
+          description: `${Math.floor(playTime/60000)} dakika geçti. Ev kedisi yaşamı devam ediyor! 🏠`,
+        });
+      }
+      return;
+    }
+
+    // Medium/Hard modes - LONGER GAMEPLAY
     const nextIndex = currentScenarioIndex + 1;
     
     if (nextIndex >= currentGame.scenarios.length) {
-      // Game completed successfully
+      // Add more random scenarios or loop with variations
+      const extendedIndex = nextIndex % currentGame.scenarios.length;
+      setCurrentScenarioIndex(extendedIndex);
+      
       toast({
-        title: "Tebrikler!",
-        description: `Oyunu başarıyla tamamladın! Toplam puan: ${stats.points}`,
+        title: "📚 Yeni Bölüm!",
+        description: `Macera devam ediyor... ${Math.floor(playTime/60000)} dakika hayatta kalıyorsun!`,
       });
-      setGameOver(true);
       return;
     }
     
