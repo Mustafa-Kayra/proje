@@ -1,53 +1,176 @@
-import { useEffect } from "react";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import GameMenu from './components/GameMenu';
+import GameScenario from './components/GameScenario';
+import GameDashboard from './components/GameDashboard';
+import { gameScenarios, gameStats } from './data/mock';
+import { Toaster } from './components/ui/toaster';
+import { useToast } from './hooks/use-toast';
+import './App.css';
 
 function App() {
-  return (
-    <div className="App">
+  const [currentGame, setCurrentGame] = useState(null);
+  const [gameMode, setGameMode] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const { toast } = useToast();
+
+  const startGame = (mode) => {
+    const selectedGame = gameScenarios[mode];
+    const initialStats = { ...gameStats[mode] };
+    
+    setCurrentGame(selectedGame);
+    setGameMode(selectedGame);
+    setStats(initialStats);
+    setCurrentScenarioIndex(0);
+    setGameOver(false);
+
+    toast({
+      title: "Oyun Başladı!",
+      description: `${selectedGame.name} modunda maceraya başlıyorsun!`,
+    });
+  };
+
+  const makeChoice = (choice) => {
+    const newStats = { ...stats };
+    
+    // Update points
+    newStats.points += choice.points;
+    
+    // Update hunger if exists
+    if (choice.hunger && newStats.hunger !== undefined) {
+      newStats.hunger = Math.max(0, Math.min(100, newStats.hunger + choice.hunger));
+    }
+    
+    // Update health if exists
+    if (choice.health && newStats.health !== undefined) {
+      newStats.health = Math.max(0, Math.min(100, newStats.health + choice.health));
+    }
+
+    // Check game over conditions
+    if (newStats.hunger !== undefined && newStats.hunger <= 0) {
+      setGameOver(true);
+      toast({
+        title: "Oyun Bitti!",
+        description: "Açlıktan öldün... 😿",
+        variant: "destructive"
+      });
+    }
+
+    if (newStats.health !== undefined && newStats.health <= 0) {
+      setGameOver(true);
+      toast({
+        title: "Oyun Bitti!",
+        description: "Sağlığın bitti... 😿",
+        variant: "destructive"
+      });
+    }
+
+    // Check kitten health in hard mode
+    if (newStats.kittens) {
+      const deadKitten = newStats.kittens.find(kitten => kitten.health <= 0 || kitten.hunger <= 0);
+      if (deadKitten) {
+        setGameOver(true);
+        toast({
+          title: "Oyun Bitti!",
+          description: `${deadKitten.name} öldü... Anne kedi olarak başarısız oldun. 😿`,
+          variant: "destructive"
+        });
+      }
+    }
+
+    setStats(newStats);
+  };
+
+  const nextScenario = () => {
+    if (gameOver) return;
+
+    const nextIndex = currentScenarioIndex + 1;
+    
+    if (nextIndex >= currentGame.scenarios.length) {
+      // Game completed successfully
+      toast({
+        title: "Tebrikler!",
+        description: `Oyunu başarıyla tamamladın! Toplam puan: ${stats.points}`,
+      });
+      setGameOver(true);
+      return;
+    }
+    
+    setCurrentScenarioIndex(nextIndex);
+  };
+
+  const resetGame = () => {
+    setCurrentGame(null);
+    setGameMode(null);
+    setStats(null);
+    setCurrentScenarioIndex(0);
+    setGameOver(false);
+  };
+
+  if (!currentGame) {
+    return (
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<GameMenu onStartGame={startGame} />} />
+          </Routes>
+          <Toaster />
+        </div>
       </BrowserRouter>
-    </div>
+    );
+  }
+
+  if (gameOver) {
+    return (
+      <BrowserRouter>
+        <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-8 text-center max-w-md">
+            <h2 className="text-3xl font-bold mb-4 text-gray-800">Oyun Bitti!</h2>
+            <p className="text-gray-600 mb-2">Toplam Puan: <span className="font-bold text-purple-600">{stats.points}</span></p>
+            <p className="text-gray-600 mb-6">Mod: {gameMode.name}</p>
+            <button
+              onClick={resetGame}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium shadow-lg transform transition-all duration-200 hover:scale-105"
+            >
+              Yeniden Oyna
+            </button>
+          </div>
+          <Toaster />
+        </div>
+      </BrowserRouter>
+    );
+  }
+
+  const currentScenario = currentGame.scenarios[currentScenarioIndex];
+
+  return (
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={
+            <div>
+              <div className="container mx-auto px-4 py-4">
+                <GameDashboard 
+                  gameMode={gameMode}
+                  stats={stats}
+                  onUpdateStats={setStats}
+                />
+              </div>
+              <GameScenario 
+                scenario={currentScenario}
+                gameMode={gameMode}
+                stats={stats}
+                onMakeChoice={makeChoice}
+                onNextScenario={nextScenario}
+              />
+            </div>
+          } />
+        </Routes>
+        <Toaster />
+      </div>
+    </BrowserRouter>
   );
 }
 
