@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Cat, Home, MapPin, Baby } from 'lucide-react';
-import { gameScenarios } from '../data/mock';
+import { gameScenarios, themes } from '../data/mock';
 
 const GameMenu = ({ onStartGame }) => {
   const [selectedMode, setSelectedMode] = useState(null);
