@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import GameMenu from './components/GameMenu';
-import GameScenario from './components/GameScenario';
+import DetailedGameScenario from './components/DetailedGameScenario';
 import GameDashboard from './components/GameDashboard';
 import ProfilePanel from './components/ProfilePanel';
 import ThemeSelector from './components/ThemeSelector';
